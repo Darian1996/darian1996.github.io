@@ -1,0 +1,73 @@
+@startuml
+
+
+AnnotationConfigApplicationContext -> AbstractApplicationContext: #refresh
+AbstractApplicationContext -> AbstractApplicationContext: #refresh
+group refresh
+AbstractApplicationContext -> AbstractApplicationContext: obtainFreshBeanFactory();
+note left: 生成 ConfigurableListableBeanFactory \nIOC 容器
+AbstractApplicationContext -> AbstractApplicationContext: prepareBeanFactory(beanFactory);
+group prepareBeanFactory
+AbstractApplicationContext --> AbstractApplicationContext: setBeanClassLoader
+note left: bean classLoader
+AbstractApplicationContext --> AbstractApplicationContext: ignoreDependencyInterface
+note left: aware 回调相关
+AbstractApplicationContext --> AbstractApplicationContext: registerResolvableDependency
+note left: BeanFactory、applicationcontext\n 等的注入，只能用于依赖注入
+AbstractApplicationContext --> AbstractApplicationContext: addBeanPostProcessor
+note left: 添加 Bean 的处理器
+AbstractApplicationContext --> AbstractApplicationContext: registerSingleton
+note left: 注册 一些单例的 Bean\n environment
+end
+
+AbstractApplicationContext -> AbstractApplicationContext: postProcessBeanFactory(beanFactory);
+note left: 添加 BeanFactory 的后置处理
+AbstractApplicationContext -> AbstractApplicationContext: invokeBeanFactoryPostProcessors(beanFactory);
+note left: BeanFactory 的后置处理的回调
+
+group invokeBeanFactoryPostProcessors
+AbstractApplicationContext -> PostProcessorRegistrationDelegate: postProcessBeanDefinitionRegistry
+PostProcessorRegistrationDelegate -> BeanDefinitionRegistryPostProcessor :postProcessBeanDefinitionRegistry()
+
+PostProcessorRegistrationDelegate -> PostProcessorRegistrationDelegate : sortPostProcessors
+note left: 把 postProcessor 拍序
+
+
+end
+
+
+AbstractApplicationContext -> AbstractApplicationContext: registerBeanPostProcessors(beanFactory);
+note left: 注册 BeanPostProcessor
+AbstractApplicationContext -> AbstractApplicationContext: initMessageSource();
+note left: 初始化信息源，和国际化相关.
+AbstractApplicationContext -> AbstractApplicationContext: initApplicationEventMulticaster();
+note left: 初始化容器事件传播器.
+AbstractApplicationContext -> AbstractApplicationContext: onRefresh();
+note left: 调用子类的某些特殊Bean初始化方法
+AbstractApplicationContext -> AbstractApplicationContext: registerListeners();
+note left: 为事件传播器注册事件监听器.
+AbstractApplicationContext -> AbstractApplicationContext: finishBeanFactoryInitialization(beanFactory);
+
+group finishBeanFactoryInitialization \n对配置了lazy-init属性的Bean进行预实例化处理
+AbstractApplicationContext -> ConfigurableListableBeanFactory: freezeConfiguration();
+note left: 缓存容器中所有注册的BeanDefinition元数据，以防被修改
+AbstractApplicationContext ->  ConfigurableListableBeanFactory : preInstantiateSingletons();
+note left: 对配置了lazy-init属性的单态模式Bean进行预实例化处理
+
+group preInstantiateSingletons()  \n对配置了lazy-init属性的单态模式Bean进行预实例化处理
+ConfigurableListableBeanFactory --> DefaultListableBeanFactory: preInstantiateSingletons();
+note left: 当工厂初始化完成的时候，\n 初始化所有剩余的单例Bean
+DefaultListableBeanFactory -> DefaultSingletonBeanRegistry: getSingleton
+note left: 获取单例对象
+
+end
+
+end
+
+
+
+AbstractApplicationContext -> AbstractApplicationContext: finishRefresh();
+note left: 初始化容器的生命周期事件处理器，并发布容器的生命周期事件
+end
+
+@enduml

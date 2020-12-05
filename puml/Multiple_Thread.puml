@@ -1,0 +1,23 @@
+@startmindmap
+* 多线程并发
+** Java 线程实现
+*** 线程基础
+**** Java 同步原语
+***** synchronized 关键字
+***** volatile 关键字
+***** CAS操作-AuomicX
+
+**** Java 内存模型
+***** 可见性（viability）
+***** 原子性（Atomicity）
+***** 顺序性（Order）
+***** Happends-Before
+***** as-if-serial语义
+***** final 域
+
+**** Thread
+***** 状态 （State）
+
+
+
+@endmindmap

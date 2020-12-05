@@ -1,0 +1,55 @@
+@startuml
+AnnotationConfigApplicationContext -> AnnotationConfigApplicationContext: register(BeanClass)
+AnnotationConfigApplicationContext -> AnnotatedBeanDefinitionReader: register(BeanClass)
+AnnotatedBeanDefinitionReader -> AnnotatedBeanDefinitionReader: registerBean(java.lang.Class<?>)
+AnnotatedBeanDefinitionReader -> AnnotatedBeanDefinitionReader: doRegisterBean
+
+group doRegisterBean
+
+this.scopeMetadataResolver -> this.scopeMetadataResolver: resolveScopeMetadata
+note left: 解析作用域元信息
+this.beanNameGenerator ->  this.beanNameGenerator : generateBeanName
+note left: 生成 beanName
+AnnotationConfigUtils -> AnnotationConfigUtils : processCommonDefinitionAnnotations(abd);
+note left: 生成 bean 的元信息 \n `@Lazy` 、 `@Primary` 、  `@DependsOn`\n `@Role`  、 `@Description`
+
+group 通过这个方法已经加载配置文件的各种属性
+AnnotationConfigUtils -> AnnotationConfigUtils : applyScopedProxyMode\n(scopeMetadata, definitionHolder, this.registry);
+ScopedProxyCreator -> ScopedProxyCreator: createScopedProxy\n(definition, registry, proxyTargetClass);
+ScopedProxyUtils -> ScopedProxyUtils : createScopedProxy
+ScopedProxyUtils -> ScopedProxyCreator :  return new BeanDefinitionHolder\n(proxyDefinition, originalBeanName, definition.getAliases());
+end
+
+
+group 注册 Bean 的元信息
+
+BeanDefinitionReaderUtils -> BeanDefinitionReaderUtils: registerBeanDefinition
+
+group registerBeanDefinition
+BeanDefinitionReaderUtils -> BeanDefinitionRegistry: registerBeanDefinition
+
+BeanDefinitionRegistry-> DefaultListableBeanFactory: registerBeanDefinition
+note left: 注册 beanDefinition
+
+DefaultListableBeanFactory -> AbstractBeanDefinition :  ((AbstractBeanDefinition)\nbeanDefinition).validate();
+note left: 先进行 BeanDefinition 的验证
+
+DefaultListableBeanFactory -> DefaultListableBeanFactory: !isAllowBeanDefinitionOverriding() :
+note left: 假如不允许覆盖，抛出来错误
+
+DefaultListableBeanFactory -> DefaultListableBeanFactory: this.beanDefinitionMap.put(beanName, beanDefinition); \n this.beanDefinitionNames = updatedDefinitions;
+note left: 更新 beanDefinitionMap 还有 beanDefinitionNames
+
+
+
+
+
+
+BeanDefinitionReaderUtils -> BeanDefinitionRegistry : registerAlias:
+note left: 注册别名（就是当成一个 另外一个 Bean）
+end
+
+end
+
+end
+@enduml

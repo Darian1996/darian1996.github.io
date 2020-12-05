@@ -1,0 +1,50 @@
+---
+title: Search
+layout: default
+description: Only the better, not the Best
+header-img: "img/home-bg-o.jpg"
+---
+
+<!--
+Credits: this page shamelessly borrowed a lot from:
+https://github.com/kitian616/jekyll-TeXt-theme
+-->
+<!-- Page Header -->
+{% include intro-header.html type='page' short=true %}
+<!-- Main Content -->
+<div class="container">
+    <div class="page page-search animation-fade-up">
+        <input id="search-input" style="width: 75%;height: 60px;" type="text" placeholder="请在这里输入关键词^_^"></input>
+        <h1>
+            <span>搜索结果</span>
+            <img src="{{site.baseurl}}/search/loading.svg">
+        </h1>
+        <div class="list-search 
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                postlist-container">
+            {% for post in site.posts %}
+            <!--<li hidden>-->
+                <div class = "post-preview">
+                    <a href="{{site.baseurl}}{{ post.url }}" style="border-bottom:0px">
+                        <h2 class="title-me post-title">{{ post.title }}</h2>
+                        <div class="content-me post-content-preview"></div>
+                    </a>
+                    <p class="post-meta">
+                        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
+                    </p>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="{{site.baseurl}}/search/search.css">
+<script>window.baseurl = "{{site.baseurl}}";</script>
+<script src="{{site.baseurl}}/js/jquery.min.js"></script>
+<script src="{{site.baseurl}}/search/search.js"></script>
+
+
+

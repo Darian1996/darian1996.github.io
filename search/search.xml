@@ -1,0 +1,8 @@
+---
+layout: null
+---
+<ul>
+    {%- for post in site.posts %}
+    <li>{{ post.content | strip_html | strip_newlines | strip | replace: " ", "" | replace: "	", ""}}</li>
+    {%- endfor %}
+</ul>
