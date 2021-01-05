@@ -11,8 +11,9 @@ $(function() {
   $.ajax({
     url: window.baseurl + '/search/search.xml',
     dataType: 'html',
-    cache: true,
-    timeout: 10000,
+    // 不需要缓存了，已经有 serviceWorker 了
+    // cache: true,
+    // timeout: 10000,
     success: function (data) {
       searchData = data
       $('.page-search h1 img').css('opacity', 0)
